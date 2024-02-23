@@ -20,7 +20,7 @@ class NetworkModel {
 
 enum NetworkType {
   wifi("Wifi"),
-  cellular("Phone"),
+  cellular("Cellular"),
   none("None");
 
   final String rawValue;

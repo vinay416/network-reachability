@@ -9,9 +9,18 @@ class MethodChannelNetworkCheck extends NetworkCheckPlatform {
   @visibleForTesting
   final methodChannel = const MethodChannel('network_check');
 
+  @visibleForTesting
+  final eventChannel = const EventChannel('network_check_stream'); 
+  // timeHandlerEvent event name . it should be same on android , IOS and Flutter
+
   @override
   Future<dynamic> getConnectivityStatus() async {
     final data = await methodChannel.invokeMethod('getConnectivityStatus');
     return data;
+  }
+
+  @override
+  Stream<dynamic> getConnectivityStream() {
+    return eventChannel.receiveBroadcastStream();
   }
 }

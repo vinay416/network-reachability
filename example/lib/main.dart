@@ -45,9 +45,18 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(
-          child: Text('Running on: $platformStatus\n'),
-        ),
+        // body: StreamBuilder(
+        //   stream: networkCheckPlugin.connectivityStream,
+        //   builder: (context, snapshot) {
+        //     if (snapshot.hasError) {
+        //       return const Text("Stream error");
+        //     }
+        //     if (snapshot.hasData) {
+        //       return Text(snapshot.data?.toString() ?? "Data error");
+        //     }
+        //     return const CircularProgressIndicator();
+        //   },
+        // ),
       ),
     );
   }

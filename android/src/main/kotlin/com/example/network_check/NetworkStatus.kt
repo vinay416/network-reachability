@@ -7,7 +7,7 @@ enum class NetworkStatus {
 
 enum class NetworkMode {
     Wifi,
-    Phone,
+    Cellular,
     None,
 }
 
