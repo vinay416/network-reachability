@@ -24,7 +24,7 @@ class NetworkConnector (context: Context) {
                 throw Error("Android 5.0 and below not supported")
             }
         }catch (e:Error){
-            Log.e(TAG,"Error fetching network status $e")
+            Log.e(TAG, "Error fetching network status $e")
             null
         }
      }
@@ -52,27 +52,6 @@ class NetworkConnector (context: Context) {
             NetworkModel(NetworkStatus.NotConnected,networkMode)
         }
     }
-
-//    @Suppress("DEPRECATION")
-//    private suspend fun targetApiLow() : NetworkModel? {
-//        val currentNetwork = connectivityManager.activeNetworkInfo
-//            ?: return null
-//        var networkMode : NetworkMode = NetworkMode.None
-//        if (currentNetwork.type ==  (NetworkCapabilities.TRANSPORT_CELLULAR)){
-//            networkMode = NetworkMode.Cellular
-//        }
-//        else if (currentNetwork.type ==  (NetworkCapabilities.TRANSPORT_WIFI)){
-//            networkMode = NetworkMode.Wifi
-//        }
-//        val isReachable = withContext(Dispatchers.IO) {
-//            return@withContext NetworkReachability().hasInternetConnected()
-//        }
-//        return if (isReachable) {
-//            NetworkModel(NetworkStatus.Connected,networkMode)
-//        } else {
-//            NetworkModel(NetworkStatus.NotConnected,networkMode)
-//        }
-//    }
 
 }
 

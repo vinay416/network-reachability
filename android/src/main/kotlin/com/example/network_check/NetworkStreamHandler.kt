@@ -7,7 +7,6 @@ import android.net.ConnectivityManager
 import android.net.LinkProperties
 import android.net.Network
 import android.net.NetworkCapabilities
-import android.net.NetworkRequest
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -31,12 +30,17 @@ class NetworkStreamHandler (context: Context) : EventChannel.StreamHandler {
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     private val uiThreadHandler: Handler = Handler(Looper.getMainLooper())
     private var networkMode: NetworkMode = NetworkMode.None
+    private var debugMode: Boolean = false
 
 
     override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
         eventSink = sink
+        val dataMap = p0 as Map<*, *>
+        debugMode = dataMap["debugMode"] as Boolean? ?: false
         try {
-            Log.d(ContentValues.TAG, "network stream listening")
+            if (debugMode) {
+                Log.d(ContentValues.TAG, "network stream listening")
+            }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 streamTargetApiN()
@@ -45,13 +49,17 @@ class NetworkStreamHandler (context: Context) : EventChannel.StreamHandler {
             }
         } catch (e:Error){
             val message = "Error fetching network status"
-            Log.e(TAG,"$message $e")
             sink.error("-1",message,e)
+            if (debugMode) {
+                Log.e(TAG, "$message $e")
+            }
         }
     }
 
     override fun onCancel(p0: Any?) {
-        Log.d(ContentValues.TAG, "network stream closed")
+        if (debugMode) {
+            Log.d(ContentValues.TAG, "network stream closed")
+        }
         eventSink = null
     }
 
@@ -61,17 +69,23 @@ class NetworkStreamHandler (context: Context) : EventChannel.StreamHandler {
         connectivityManager.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
 
             override fun onAvailable(network : Network) {
-//                Log.i(TAG, "onAvailable: $network")
+                if (debugMode) {
+                    Log.i(TAG, "onAvailable: $network")
+                }
             }
 
             override fun onLost(network : Network) {
-                Log.i(TAG, "onLost: + $network")
+                if (debugMode) {
+                    Log.i(TAG, "onLost: + $network")
+                }
                 val data = NetworkModel(NetworkStatus.NotConnected, NetworkMode.None)
                 uiThreadHandler.post { eventSink?.success(data.toMap()) }
             }
 
             override fun onCapabilitiesChanged(network : Network, capabilities : NetworkCapabilities) {
-                Log.i(TAG, "onCapabilitiesChanged: + $capabilities")
+                if (debugMode) {
+                    Log.i(TAG, "onCapabilitiesChanged: + $capabilities")
+                }
                 val networkTransport = networkTransport(network)
                 if(networkTransport==null) {
                     uiThreadHandler.post {
@@ -87,32 +101,13 @@ class NetworkStreamHandler (context: Context) : EventChannel.StreamHandler {
             }
 
             override fun onLinkPropertiesChanged(network : Network, linkProperties : LinkProperties) {
-//                Log.i(TAG, "onLinkPropertiesChanged: $linkProperties")
+                if (debugMode) {
+                    Log.i(TAG, "onLinkPropertiesChanged: $linkProperties")
+                }
             }
 
         })
     }
-
-//    @OptIn(DelicateCoroutinesApi::class)
-//    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-//    private fun streamTargetApiBelowN() {
-//        val networkCallback: ConnectivityManager.NetworkCallback = @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-//        object : ConnectivityManager.NetworkCallback() {
-//            override fun onAvailable(network: Network) {
-//                Log.i(TAG, "The default network is now: " + network)
-//            }
-//
-//            override fun onLost(network: Network) {
-//                Log.i(TAG, "The application no longer has a default network. The last default network was " + network)
-//            }
-//
-//        }
-//
-//        val request = NetworkRequest.Builder()
-//            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET).build()
-//        connectivityManager.registerNetworkCallback(request, networkCallback);
-//    }
-
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun networkTransport(network : Network)
@@ -142,4 +137,5 @@ class NetworkStreamHandler (context: Context) : EventChannel.StreamHandler {
     }
 
 }
+
 

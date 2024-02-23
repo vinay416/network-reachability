@@ -20,10 +20,10 @@ class NetworkReachability {
                 connection.setRequestProperty("Connection", "close")
                 connection.connectTimeout = 1000 // configurable
                 connection.connect()
-                Log.i(TAG,"hasInternetConnected: ${(connection.responseCode == 200)}")
+//                Log.i(TAG, "hasInternetConnected: ${(connection.responseCode == 200)}")
                 (connection.responseCode == 200)
             } catch (e: IOException) {
-                println("Error checking internet connection : $e")
+                Log.e(TAG, "Error checking internet connection : $e")
                 false
             }
         }

@@ -29,7 +29,7 @@ abstract class NetworkCheckPlatform extends PlatformInterface {
     );
   }
 
-  Stream<dynamic> getConnectivityStream() {
+  Stream<dynamic> getConnectivityStream({bool debugMode = false}) {
     throw UnimplementedError(
       'getConnectivityStream() has not been implemented.',
     );

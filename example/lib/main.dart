@@ -45,18 +45,18 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        // body: StreamBuilder(
-        //   stream: networkCheckPlugin.connectivityStream,
-        //   builder: (context, snapshot) {
-        //     if (snapshot.hasError) {
-        //       return const Text("Stream error");
-        //     }
-        //     if (snapshot.hasData) {
-        //       return Text(snapshot.data?.toString() ?? "Data error");
-        //     }
-        //     return const CircularProgressIndicator();
-        //   },
-        // ),
+        body: StreamBuilder(
+          stream: networkCheckPlugin.connectivityStream(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Text("Stream error");
+            }
+            if (snapshot.hasData) {
+              return Text(snapshot.data?.toString() ?? "Data error");
+            }
+            return const CircularProgressIndicator();
+          },
+        ),
       ),
     );
   }
