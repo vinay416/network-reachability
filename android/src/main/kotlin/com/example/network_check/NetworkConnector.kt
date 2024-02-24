@@ -32,17 +32,11 @@ class NetworkConnector (context: Context) {
     @OptIn(DelicateCoroutinesApi::class)
     @TargetApi(Build.VERSION_CODES.M)
     private suspend fun targetApiM() : NetworkModel? {
-        val currentNetwork = connectivityManager.activeNetwork
+        val network = connectivityManager.activeNetwork
             ?: return null
-        val capabilities = connectivityManager.getNetworkCapabilities(currentNetwork)
+        val networkMode = NetworkTransporter().current(network,connectivityManager)
             ?: return null
-        var networkMode : NetworkMode = NetworkMode.None
-        if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)){
-            networkMode = NetworkMode.Cellular
-        }
-        else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)){
-            networkMode = NetworkMode.Wifi
-        }
+
         val isReachable = withContext(Dispatchers.IO) {
             return@withContext NetworkReachability().hasInternetConnected()
         }

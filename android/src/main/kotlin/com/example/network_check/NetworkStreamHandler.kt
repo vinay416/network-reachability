@@ -31,6 +31,7 @@ class NetworkStreamHandler (context: Context) : EventChannel.StreamHandler {
     private val uiThreadHandler: Handler = Handler(Looper.getMainLooper())
     private var networkMode: NetworkMode = NetworkMode.None
     private var debugMode: Boolean = false
+    private var networkTransport = NetworkTransporter()
 
 
     override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
@@ -86,7 +87,7 @@ class NetworkStreamHandler (context: Context) : EventChannel.StreamHandler {
                 if (debugMode) {
                     Log.i(TAG, "onCapabilitiesChanged: + $capabilities")
                 }
-                val networkTransport = networkTransport(network)
+                val networkTransport = networkTransport.current(network,connectivityManager)
                 if(networkTransport==null) {
                     uiThreadHandler.post {
                         eventSink?.error("-1", "Network Transport", capabilities)
@@ -107,20 +108,6 @@ class NetworkStreamHandler (context: Context) : EventChannel.StreamHandler {
             }
 
         })
-    }
-
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun networkTransport(network : Network)
-    : NetworkMode? {
-        val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return null
-
-        return if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)){
-            NetworkMode.Cellular
-        } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)){
-            NetworkMode.Wifi
-        } else {
-            NetworkMode.None
-        }
     }
 
     @OptIn(DelicateCoroutinesApi::class)
