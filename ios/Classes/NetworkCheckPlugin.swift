@@ -10,8 +10,16 @@ public class NetworkCheckPlugin: NSObject, FlutterPlugin {
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
-    case "getPlatformVersion":
-      result("iOS " + UIDevice.current.systemVersion)
+    case "getConnectivityStatus":
+        let networkData = NetworkReachability().isNetworkAvailable()
+        guard let networkData else {
+            return result(
+                FlutterError( code: "-1",
+                            message: "API broken",
+                            details: "Internal Api return null" )
+            )
+        }
+        result(networkData.toMap())
     default:
       result(FlutterMethodNotImplemented)
     }

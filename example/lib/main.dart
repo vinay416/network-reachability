@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:network_check/network_check.dart';
 
 void main() {
@@ -45,18 +44,18 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: StreamBuilder(
-          stream: networkCheckPlugin.connectivityStream(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Text("Stream error");
-            }
-            if (snapshot.hasData) {
-              return Text(snapshot.data?.toString() ?? "Data error");
-            }
-            return const CircularProgressIndicator();
-          },
-        ),
+        // body: StreamBuilder(
+        //   stream: networkCheckPlugin.connectivityStream(),
+        //   builder: (context, snapshot) {
+        //     if (snapshot.hasError) {
+        //       return const Text("Stream error");
+        //     }
+        //     if (snapshot.hasData) {
+        //       return Text(snapshot.data?.toString() ?? "Data error");
+        //     }
+        //     return const CircularProgressIndicator();
+        //   },
+        // ),
       ),
     );
   }
